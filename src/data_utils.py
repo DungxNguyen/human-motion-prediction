@@ -9,6 +9,39 @@ import numpy as np
 from six.moves import xrange # pylint: disable=redefined-builtin
 import copy
 
+
+def xyz2expmap(J0, J1, J2):
+  return rotmat2expmap(xzy2rotmat(J0, J1, J2))
+
+
+def skew(x):
+  return np.array([[0, -x[2], x[1]],
+                     [x[2], 0, -x[0]],
+                     [-x[1], x[0], 0]])
+
+
+def norm_vec(u):
+  return u / np.sqrt(np.dot(u, u))
+
+
+def xzy2rotmat(J0, J1, J2):
+  """
+  Converts an angle to rotation matrix 
+
+  Args
+    J0, J1, J2: 3 3x1 vectors of the positions of 3 joints. 
+    J0 is joint in between. J1 is a parent of J0 and J2 is a child of J0 in a human kinematic tree
+  Returns
+    R: a 3x3 rotation matrix 
+  """
+  U = J1 - J0
+  V = J2 - J0
+  axis = norm_vec(np.cross(U, V)) 
+  cosine_theta = np.dot(U, V) / (np.sqrt(np.dot(U, U)) * np.sqrt(np.dot(V, V)))
+  sine_theta = np.sqrt(1 - cosine_theta ** 2)
+  R = cosine_theta * np.identity(3) + sine_theta * skew(axis) + (1 - cosine_theta) * np.outer(axis, axis)
+  return R
+  
 def rotmat2euler( R ):
   """
   Converts a rotation matrix to Euler angles

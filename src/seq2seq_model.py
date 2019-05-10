@@ -60,7 +60,7 @@ class Seq2SeqModel(object):
       dtype: the data type to use to store internal variables.
     """
 
-    self.HUMAN_SIZE = 54
+    self.HUMAN_SIZE = 2 
     self.input_size = self.HUMAN_SIZE + number_of_actions if one_hot else self.HUMAN_SIZE
 
     print( "One hot is ", one_hot )
@@ -375,6 +375,20 @@ class Seq2SeqModel(object):
       self.walkingtogether_err560_summary  = tf.summary.scalar( 'euler_error_walkingtogether/srnn_seeds_0560', self.walkingtogether_err560 )
       self.walkingtogether_err1000_summary = tf.summary.scalar( 'euler_error_walkingtogether/srnn_seeds_1000', self.walkingtogether_err1000 )
 
+    with tf.name_scope( "euler_error_standstill" ):
+      self.standstill_err80   = tf.placeholder( tf.float32, name="standstill_srnn_seeds_0080" )
+      self.standstill_err160  = tf.placeholder( tf.float32, name="standstill_srnn_seeds_0160" )
+      self.standstill_err320  = tf.placeholder( tf.float32, name="standstill_srnn_seeds_0320" )
+      self.standstill_err400  = tf.placeholder( tf.float32, name="standstill_srnn_seeds_0400" )
+      self.standstill_err560  = tf.placeholder( tf.float32, name="standstill_srnn_seeds_0560" )
+      self.standstill_err1000 = tf.placeholder( tf.float32, name="standstill_srnn_seeds_1000" )
+
+      self.standstill_err80_summary   = tf.summary.scalar( 'euler_error_standstill/srnn_seeds_0080', self.standstill_err80 )
+      self.standstill_err160_summary  = tf.summary.scalar( 'euler_error_standstill/srnn_seeds_0160', self.standstill_err160 )
+      self.standstill_err320_summary  = tf.summary.scalar( 'euler_error_standstill/srnn_seeds_0320', self.standstill_err320 )
+      self.standstill_err400_summary  = tf.summary.scalar( 'euler_error_standstill/srnn_seeds_0400', self.standstill_err400 )
+      self.standstill_err560_summary  = tf.summary.scalar( 'euler_error_standstill/srnn_seeds_0560', self.standstill_err560 )
+      self.standstill_err1000_summary = tf.summary.scalar( 'euler_error_standstill/srnn_seeds_1000', self.standstill_err1000 )
     self.saver = tf.train.Saver( tf.global_variables(), max_to_keep=10 )
 
   def step(self, session, encoder_inputs, decoder_inputs, decoder_outputs,
@@ -520,7 +534,7 @@ class Seq2SeqModel(object):
 
     actions = ["directions", "discussion", "eating", "greeting", "phoning",
               "posing", "purchases", "sitting", "sittingdown", "smoking",
-              "takingphoto", "waiting", "walking", "walkingdog", "walkingtogether"]
+               "takingphoto", "waiting", "walking", "walkingdog", "walkingtogether", "standstill"]
 
     if not action in actions:
       raise ValueError("Unrecognized action {0}".format(action))

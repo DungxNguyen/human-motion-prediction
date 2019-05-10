@@ -454,6 +454,20 @@ def train():
                model.walkingtogether_err560: mean_mean_errors[13] if FLAGS.seq_length_out >= 14 else None,
                model.walkingtogether_err1000: mean_mean_errors[24] if FLAGS.seq_length_out >= 25 else None})
 
+          elif action == "standstill":
+            summaries = sess.run(
+              [model.standstill_err80_summary,
+               model.standstill_err160_summary,
+               model.standstill_err320_summary,
+               model.standstill_err400_summary,
+               model.standstill_err560_summary,
+               model.standstill_err1000_summary],
+              {model.standstill_err80: mean_mean_errors[1] if FLAGS.seq_length_out >= 2 else None,
+               model.standstill_err160: mean_mean_errors[3] if FLAGS.seq_length_out >= 4 else None,
+               model.standstill_err320: mean_mean_errors[7] if FLAGS.seq_length_out >= 8 else None,
+               model.standstill_err400: mean_mean_errors[9] if FLAGS.seq_length_out >= 10 else None,
+               model.standstill_err560: mean_mean_errors[13] if FLAGS.seq_length_out >= 14 else None,
+               model.standstill_err1000: mean_mean_errors[24] if FLAGS.seq_length_out >= 25 else None})
           for i in np.arange(len( summaries )):
             model.test_writer.add_summary(summaries[i], current_step)
 
@@ -637,7 +651,7 @@ def define_actions( action ):
   actions = ["walking", "eating", "smoking", "discussion",  "directions",
               "greeting", "phoning", "posing", "purchases", "sitting",
               "sittingdown", "takingphoto", "waiting", "walkingdog",
-              "walkingtogether"]
+              "walkingtogether", "standstill"]
 
   if action in actions:
     return [action]
@@ -675,6 +689,7 @@ def read_all_data( actions, seq_length_in, seq_length_out, data_dir, one_hot ):
            seq_length_in, seq_length_out))
 
   train_subject_ids = [1,6,7,8,9,11]
+  train_subject_ids = [5]
   test_subject_ids = [5]
 
   train_set, complete_train = data_utils.load_data( data_dir, train_subject_ids, actions, one_hot )
@@ -699,3 +714,4 @@ def main(_):
 
 if __name__ == "__main__":
   tf.app.run()
+a

@@ -10,6 +10,7 @@ import viz
 import time
 import copy
 import data_utils
+import sys
 
 def fkl( angles, parent, offset, rotInd, expmapInd ):
   """
@@ -158,10 +159,23 @@ def main():
   # Load all the data
   parent, offset, rotInd, expmapInd = _some_variables()
 
-  # numpy implementation
-  with h5py.File( 'samples.h5', 'r' ) as h5f:
-    expmap_gt = h5f['expmap/gt/standstill_0'][:]
-    expmap_pred = h5f['expmap/preds/standstill_0'][:]
+  ## numpy implementation
+  #with h5py.File( 'samples.h5', 'r' ) as h5f:
+  #  expmap_gt = h5f['expmap/gt/walking_0'][:]
+  #  expmap_pred = h5f['expmap/preds/walking_0'][:]
+
+  # Read data from .txt file
+  data_dir = "./data/h3.6m/dataset"
+  test_subject_ids = [5]
+  actions = [sys.argv[1]]
+  one_hot = False
+  test_set, _ = data_utils.load_data( data_dir, test_subject_ids, actions, one_hot )
+
+  subject = 5
+  subaction = 2
+  expmap_gt = test_set[(subject, sys.argv[1], subaction, 'even')]
+  # print( expmap_gt, expmap_gt.shape )
+  expmap_pred = np.zeros_like( expmap_gt )
 
   nframes_gt, nframes_pred = expmap_gt.shape[0], expmap_pred.shape[0]
 
